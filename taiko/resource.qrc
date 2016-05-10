@@ -1,0 +1,43 @@
+<RCC>
+    <qresource prefix="/sound">
+        <file>dong.wav</file>
+        <file>balloon.wav</file>
+        <file>ka.wav</file>
+        <file>opening.wav</file>
+        <file>voice_50combo.wav</file>
+        <file>voice_100combo.wav</file>
+        <file>voice_200combo.wav</file>
+        <file>voice_300combo.wav</file>
+        <file>voice_400combo.wav</file>
+        <file>voice_500combo.wav</file>
+        <file>voice_600combo.wav</file>
+        <file>voice_700combo.wav</file>
+        <file>voice_800combo.wav</file>
+        <file>voice_900combo.wav</file>
+        <file>voice_fullcombo.wav</file>
+    </qresource>
+    <qresource prefix="/pics">
+        <file>open.jpg</file>
+        <file>icon.png</file>
+        <file>bdong.png</file>
+        <file>bka.png</file>
+        <file>blenta.png</file>
+        <file>ldong.png</file>
+        <file>lka.png</file>
+        <file>llenta.png</file>
+        <file>resultbg_clear.png</file>
+        <file>song_bg.png</file>
+        <file>song_bg_select.png</file>
+        <file>song_picked.jpg</file>
+        <file>selecting_song.jpg</file>
+        <file>difficulty_easy.png</file>
+        <file>difficulty_extrem.png</file>
+        <file>difficulty_hard.png</file>
+        <file>difficulty_normal.png</file>
+        <file>difficulty.png</file>
+        <file>star.png</file>
+    </qresource>
+    <qresource prefix="/files">
+        <file>files/song_list.txt</file>
+    </qresource>
+</RCC>
