@@ -51,16 +51,18 @@ OBJECTS_DIR   = ./
 SOURCES       = ../taiko/main.cpp \
 		../taiko/mainwindow.cpp \
 		../taiko/scene.cpp \
-		../taiko/donka.cpp \
-		../taiko/file_control.cpp qrc_resource.cpp \
-		moc_mainwindow.cpp
+		../taiko/file_control.cpp \
+		../taiko/notes.cpp qrc_resource.cpp \
+		moc_mainwindow.cpp \
+		moc_scene.cpp
 OBJECTS       = main.o \
 		mainwindow.o \
 		scene.o \
-		donka.o \
 		file_control.o \
+		notes.o \
 		qrc_resource.o \
-		moc_mainwindow.o
+		moc_mainwindow.o \
+		moc_scene.o
 DIST          = /Users/Evan/Qt5.6.0/5.6/clang_64/mkspecs/features/spec_pre.prf \
 		/Users/Evan/Qt5.6.0/5.6/clang_64/mkspecs/qdevice.pri \
 		/Users/Evan/Qt5.6.0/5.6/clang_64/mkspecs/features/device_config.prf \
@@ -204,12 +206,12 @@ DIST          = /Users/Evan/Qt5.6.0/5.6/clang_64/mkspecs/features/spec_pre.prf \
 		/Users/Evan/Qt5.6.0/5.6/clang_64/mkspecs/features/lex.prf \
 		../taiko/taiko.pro ../taiko/mainwindow.h \
 		../taiko/scene.h \
-		../taiko/donka.h \
-		../taiko/file_control.h ../taiko/main.cpp \
+		../taiko/file_control.h \
+		../taiko/notes.h ../taiko/main.cpp \
 		../taiko/mainwindow.cpp \
 		../taiko/scene.cpp \
-		../taiko/donka.cpp \
-		../taiko/file_control.cpp
+		../taiko/file_control.cpp \
+		../taiko/notes.cpp
 QMAKE_TARGET  = taiko
 DESTDIR       = 
 TARGET        = taiko.app/Contents/MacOS/taiko
@@ -549,8 +551,8 @@ distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
 	$(COPY_FILE) --parents ../taiko/resource.qrc $(DISTDIR)/
-	$(COPY_FILE) --parents ../taiko/mainwindow.h ../taiko/scene.h ../taiko/donka.h ../taiko/file_control.h $(DISTDIR)/
-	$(COPY_FILE) --parents ../taiko/main.cpp ../taiko/mainwindow.cpp ../taiko/scene.cpp ../taiko/donka.cpp ../taiko/file_control.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents ../taiko/mainwindow.h ../taiko/scene.h ../taiko/file_control.h ../taiko/notes.h $(DISTDIR)/
+	$(COPY_FILE) --parents ../taiko/main.cpp ../taiko/mainwindow.cpp ../taiko/scene.cpp ../taiko/file_control.cpp ../taiko/notes.cpp $(DISTDIR)/
 	$(COPY_FILE) --parents ../taiko/mainwindow.ui $(DISTDIR)/
 
 
@@ -577,46 +579,85 @@ compiler_rcc_make_all: qrc_resource.cpp
 compiler_rcc_clean:
 	-$(DEL_FILE) qrc_resource.cpp
 qrc_resource.cpp: ../taiko/resource.qrc \
-		../taiko/files/song_list.txt \
-		../taiko/voice_600combo.wav \
-		../taiko/balloon.wav \
-		../taiko/voice_700combo.wav \
-		../taiko/voice_800combo.wav \
-		../taiko/dong.wav \
-		../taiko/voice_900combo.wav \
-		../taiko/ka.wav \
-		../taiko/voice_100combo.wav \
-		../taiko/voice_200combo.wav \
-		../taiko/opening.wav \
-		../taiko/voice_300combo.wav \
-		../taiko/voice_fullcombo.wav \
-		../taiko/voice_50combo.wav \
-		../taiko/voice_400combo.wav \
-		../taiko/voice_500combo.wav \
-		../taiko/song_picked.jpg \
-		../taiko/difficulty_extrem.png \
-		../taiko/selecting_song.jpg \
-		../taiko/song_bg_select.png \
-		../taiko/difficulty.png \
-		../taiko/bka.png \
-		../taiko/star.png \
-		../taiko/difficulty_hard.png \
-		../taiko/lka.png \
-		../taiko/ldong.png \
-		../taiko/song_bg.png \
-		../taiko/icon.png \
-		../taiko/llenta.png \
-		../taiko/blenta.png \
-		../taiko/bdong.png \
-		../taiko/resultbg_clear.png \
-		../taiko/difficulty_easy.png \
-		../taiko/difficulty_normal.png \
-		../taiko/open.jpg
+		../taiko/sound/voice_600combo.wav \
+		../taiko/sound/balloon.wav \
+		../taiko/sound/voice_700combo.wav \
+		../taiko/sound/voice_800combo.wav \
+		../taiko/sound/dong.wav \
+		../taiko/sound/voice_900combo.wav \
+		../taiko/sound/ka.wav \
+		../taiko/sound/voice_100combo.wav \
+		../taiko/sound/seiseki.wav \
+		../taiko/sound/voice_200combo.wav \
+		../taiko/sound/opening.wav \
+		../taiko/sound/voice_300combo.wav \
+		../taiko/sound/voice_fullcombo.wav \
+		../taiko/sound/voice_50combo.wav \
+		../taiko/sound/voice_400combo.wav \
+		../taiko/sound/voice_500combo.wav \
+		../taiko/pics/difficulty_easy.png \
+		../taiko/pics/number_9.png \
+		../taiko/pics/song_picked.jpg \
+		../taiko/pics/resultbg_clear.png \
+		../taiko/pics/scorenumber_2.png \
+		../taiko/pics/explosion_s1.png \
+		../taiko/pics/star.png \
+		../taiko/pics/number_8.png \
+		../taiko/pics/mode_picked.png \
+		../taiko/pics/scorenumber_1.png \
+		../taiko/pics/number_7.png \
+		../taiko/pics/bg_easy.png \
+		../taiko/pics/difficulty_normal.png \
+		../taiko/pics/selecting_song.jpg \
+		../taiko/pics/scorenumber_0.png \
+		../taiko/pics/song_bg_select.png \
+		../taiko/pics/difficulty.png \
+		../taiko/pics/open.jpg \
+		../taiko/pics/scorenumber_9.png \
+		../taiko/pics/bg_normal.png \
+		../taiko/pics/number_6.png \
+		../taiko/pics/bka.png \
+		../taiko/pics/ldong.png \
+		../taiko/pics/judgement_miss.png \
+		../taiko/pics/robot.png \
+		../taiko/pics/scorenumber_8.png \
+		../taiko/pics/number_5.png \
+		../taiko/pics/icon.png \
+		../taiko/pics/blenta.png \
+		../taiko/pics/song_bg.png \
+		../taiko/pics/optionicon_random.png \
+		../taiko/pics/scorenumber_7.png \
+		../taiko/pics/number_4.png \
+		../taiko/pics/llenta.png \
+		../taiko/pics/judgement_great.png \
+		../taiko/pics/difficulty_hard.png \
+		../taiko/pics/scorenumber_6.png \
+		../taiko/pics/resultbg_failure.png \
+		../taiko/pics/number_3.png \
+		../taiko/pics/judgement_good.png \
+		../taiko/pics/arrow.png \
+		../taiko/pics/difficulty_extrem.png \
+		../taiko/pics/maku.png \
+		../taiko/pics/optionicon_demo.png \
+		../taiko/pics/bdong.png \
+		../taiko/pics/scorenumber_5.png \
+		../taiko/pics/explosion_s4.png \
+		../taiko/pics/bg_oni.png \
+		../taiko/pics/number_2.png \
+		../taiko/pics/bg_hard.png \
+		../taiko/pics/scorenumber_4.png \
+		../taiko/pics/lka.png \
+		../taiko/pics/explosion_s3.png \
+		../taiko/pics/number_1.png \
+		../taiko/pics/scorenumber_3.png \
+		../taiko/pics/explosion_s2.png \
+		../taiko/pics/number_0.png \
+		../taiko/pics/optionicon_auto.png
 	/Users/Evan/Qt5.6.0/5.6/clang_64/bin/rcc -name resource ../taiko/resource.qrc -o qrc_resource.cpp
 
-compiler_moc_header_make_all: moc_mainwindow.cpp
+compiler_moc_header_make_all: moc_mainwindow.cpp moc_scene.cpp
 compiler_moc_header_clean:
-	-$(DEL_FILE) moc_mainwindow.cpp
+	-$(DEL_FILE) moc_mainwindow.cpp moc_scene.cpp
 moc_mainwindow.cpp: /Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtWidgets.framework/Headers/QMainWindow \
 		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtWidgets.framework/Headers/qmainwindow.h \
 		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtWidgets.framework/Headers/QGraphicsScene \
@@ -643,13 +684,78 @@ moc_mainwindow.cpp: /Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtWidgets.framework/Hea
 		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtWidgets.framework/Headers/QMessageBox \
 		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtWidgets.framework/Headers/qmessagebox.h \
 		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtWidgets.framework/Headers/QGraphicsSimpleTextItem \
+		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtMultimedia.framework/Headers/QMediaPlayer \
+		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtMultimedia.framework/Headers/qmediaplayer.h \
+		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtCore.framework/Headers/QObject \
+		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtCore.framework/Headers/qobject.h \
+		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtCore.framework/Headers/QChar \
+		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtCore.framework/Headers/qchar.h \
+		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtCore.framework/Headers/QElapsedTimer \
+		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtCore.framework/Headers/qelapsedtimer.h \
 		../taiko/file_control.h \
 		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtCore.framework/Headers/QMap \
 		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtCore.framework/Headers/qmap.h \
+		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtCore.framework/Headers/QDir \
+		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtCore.framework/Headers/qdir.h \
+		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtCore.framework/Headers/QStringList \
+		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtCore.framework/Headers/qstringlist.h \
+		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtCore.framework/Headers/QTextCodec \
+		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtCore.framework/Headers/qtextcodec.h \
 		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtCore.framework/Headers/QDebug \
 		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtCore.framework/Headers/qdebug.h \
+		../taiko/notes.h \
+		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtWidgets.framework/Headers/QGraphicsSceneMouseEvent \
+		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtWidgets.framework/Headers/qgraphicssceneevent.h \
 		../taiko/mainwindow.h
 	/Users/Evan/Qt5.6.0/5.6/clang_64/bin/moc $(DEFINES) -D__APPLE__ -D__GNUC__=4 -D__APPLE_CC__ -I/Users/Evan/Qt5.6.0/5.6/clang_64/mkspecs/macx-clang -I/Users/Evan/Documents/fresh_2sem/pd2/gitHWs/pd2-Taiko/taiko -I/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtWidgets.framework/Headers -I/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtMultimedia.framework/Headers -I/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtGui.framework/Headers -I/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtNetwork.framework/Headers -I/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtCore.framework/Headers -I. -F/Users/Evan/Qt5.6.0/5.6/clang_64/lib ../taiko/mainwindow.h -o moc_mainwindow.cpp
+
+moc_scene.cpp: /Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtWidgets.framework/Headers/QGraphicsScene \
+		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtWidgets.framework/Headers/qgraphicsscene.h \
+		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtWidgets.framework/Headers/QGraphicsPixmapItem \
+		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtWidgets.framework/Headers/qgraphicsitem.h \
+		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtCore.framework/Headers/QTimer \
+		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtCore.framework/Headers/qtimer.h \
+		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtMultimedia.framework/Headers/QSound \
+		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtMultimedia.framework/Headers/qsound.h \
+		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtGui.framework/Headers/QKeyEvent \
+		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtGui.framework/Headers/qevent.h \
+		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtWidgets.framework/Headers/QLabel \
+		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtWidgets.framework/Headers/qlabel.h \
+		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtCore.framework/Headers/QString \
+		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtCore.framework/Headers/qstring.h \
+		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtCore.framework/Headers/QList \
+		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtCore.framework/Headers/qlist.h \
+		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtCore.framework/Headers/QFile \
+		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtCore.framework/Headers/qfile.h \
+		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtCore.framework/Headers/QTextStream \
+		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtCore.framework/Headers/qtextstream.h \
+		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtWidgets.framework/Headers/QMessageBox \
+		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtWidgets.framework/Headers/qmessagebox.h \
+		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtWidgets.framework/Headers/QGraphicsSimpleTextItem \
+		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtMultimedia.framework/Headers/QMediaPlayer \
+		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtMultimedia.framework/Headers/qmediaplayer.h \
+		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtCore.framework/Headers/QObject \
+		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtCore.framework/Headers/qobject.h \
+		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtCore.framework/Headers/QChar \
+		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtCore.framework/Headers/qchar.h \
+		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtCore.framework/Headers/QElapsedTimer \
+		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtCore.framework/Headers/qelapsedtimer.h \
+		../taiko/file_control.h \
+		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtCore.framework/Headers/QMap \
+		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtCore.framework/Headers/qmap.h \
+		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtCore.framework/Headers/QDir \
+		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtCore.framework/Headers/qdir.h \
+		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtCore.framework/Headers/QStringList \
+		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtCore.framework/Headers/qstringlist.h \
+		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtCore.framework/Headers/QTextCodec \
+		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtCore.framework/Headers/qtextcodec.h \
+		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtCore.framework/Headers/QDebug \
+		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtCore.framework/Headers/qdebug.h \
+		../taiko/notes.h \
+		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtWidgets.framework/Headers/QGraphicsSceneMouseEvent \
+		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtWidgets.framework/Headers/qgraphicssceneevent.h \
+		../taiko/scene.h
+	/Users/Evan/Qt5.6.0/5.6/clang_64/bin/moc $(DEFINES) -D__APPLE__ -D__GNUC__=4 -D__APPLE_CC__ -I/Users/Evan/Qt5.6.0/5.6/clang_64/mkspecs/macx-clang -I/Users/Evan/Documents/fresh_2sem/pd2/gitHWs/pd2-Taiko/taiko -I/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtWidgets.framework/Headers -I/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtMultimedia.framework/Headers -I/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtGui.framework/Headers -I/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtNetwork.framework/Headers -I/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtCore.framework/Headers -I. -F/Users/Evan/Qt5.6.0/5.6/clang_64/lib ../taiko/scene.h -o moc_scene.cpp
 
 compiler_moc_source_make_all:
 compiler_moc_source_clean:
@@ -698,11 +804,28 @@ main.o: ../taiko/main.cpp ../taiko/mainwindow.h \
 		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtWidgets.framework/Headers/QMessageBox \
 		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtWidgets.framework/Headers/qmessagebox.h \
 		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtWidgets.framework/Headers/QGraphicsSimpleTextItem \
+		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtMultimedia.framework/Headers/QMediaPlayer \
+		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtMultimedia.framework/Headers/qmediaplayer.h \
+		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtCore.framework/Headers/QObject \
+		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtCore.framework/Headers/qobject.h \
+		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtCore.framework/Headers/QChar \
+		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtCore.framework/Headers/qchar.h \
+		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtCore.framework/Headers/QElapsedTimer \
+		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtCore.framework/Headers/qelapsedtimer.h \
 		../taiko/file_control.h \
 		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtCore.framework/Headers/QMap \
 		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtCore.framework/Headers/qmap.h \
+		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtCore.framework/Headers/QDir \
+		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtCore.framework/Headers/qdir.h \
+		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtCore.framework/Headers/QStringList \
+		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtCore.framework/Headers/qstringlist.h \
+		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtCore.framework/Headers/QTextCodec \
+		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtCore.framework/Headers/qtextcodec.h \
 		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtCore.framework/Headers/QDebug \
 		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtCore.framework/Headers/qdebug.h \
+		../taiko/notes.h \
+		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtWidgets.framework/Headers/QGraphicsSceneMouseEvent \
+		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtWidgets.framework/Headers/qgraphicssceneevent.h \
 		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtWidgets.framework/Headers/QApplication \
 		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtWidgets.framework/Headers/qapplication.h \
 		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtWidgets.framework/Headers/QDesktopWidget \
@@ -736,11 +859,28 @@ mainwindow.o: ../taiko/mainwindow.cpp ../taiko/mainwindow.h \
 		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtWidgets.framework/Headers/QMessageBox \
 		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtWidgets.framework/Headers/qmessagebox.h \
 		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtWidgets.framework/Headers/QGraphicsSimpleTextItem \
+		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtMultimedia.framework/Headers/QMediaPlayer \
+		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtMultimedia.framework/Headers/qmediaplayer.h \
+		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtCore.framework/Headers/QObject \
+		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtCore.framework/Headers/qobject.h \
+		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtCore.framework/Headers/QChar \
+		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtCore.framework/Headers/qchar.h \
+		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtCore.framework/Headers/QElapsedTimer \
+		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtCore.framework/Headers/qelapsedtimer.h \
 		../taiko/file_control.h \
 		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtCore.framework/Headers/QMap \
 		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtCore.framework/Headers/qmap.h \
+		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtCore.framework/Headers/QDir \
+		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtCore.framework/Headers/qdir.h \
+		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtCore.framework/Headers/QStringList \
+		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtCore.framework/Headers/qstringlist.h \
+		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtCore.framework/Headers/QTextCodec \
+		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtCore.framework/Headers/qtextcodec.h \
 		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtCore.framework/Headers/QDebug \
 		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtCore.framework/Headers/qdebug.h \
+		../taiko/notes.h \
+		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtWidgets.framework/Headers/QGraphicsSceneMouseEvent \
+		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtWidgets.framework/Headers/qgraphicssceneevent.h \
 		ui_mainwindow.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o mainwindow.o ../taiko/mainwindow.cpp
 
@@ -768,21 +908,29 @@ scene.o: ../taiko/scene.cpp ../taiko/scene.h \
 		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtWidgets.framework/Headers/QMessageBox \
 		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtWidgets.framework/Headers/qmessagebox.h \
 		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtWidgets.framework/Headers/QGraphicsSimpleTextItem \
+		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtMultimedia.framework/Headers/QMediaPlayer \
+		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtMultimedia.framework/Headers/qmediaplayer.h \
+		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtCore.framework/Headers/QObject \
+		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtCore.framework/Headers/qobject.h \
+		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtCore.framework/Headers/QChar \
+		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtCore.framework/Headers/qchar.h \
+		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtCore.framework/Headers/QElapsedTimer \
+		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtCore.framework/Headers/qelapsedtimer.h \
 		../taiko/file_control.h \
 		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtCore.framework/Headers/QMap \
 		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtCore.framework/Headers/qmap.h \
+		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtCore.framework/Headers/QDir \
+		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtCore.framework/Headers/qdir.h \
+		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtCore.framework/Headers/QStringList \
+		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtCore.framework/Headers/qstringlist.h \
+		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtCore.framework/Headers/QTextCodec \
+		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtCore.framework/Headers/qtextcodec.h \
 		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtCore.framework/Headers/QDebug \
-		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtCore.framework/Headers/qdebug.h
+		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtCore.framework/Headers/qdebug.h \
+		../taiko/notes.h \
+		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtWidgets.framework/Headers/QGraphicsSceneMouseEvent \
+		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtWidgets.framework/Headers/qgraphicssceneevent.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o scene.o ../taiko/scene.cpp
-
-donka.o: ../taiko/donka.cpp ../taiko/donka.h \
-		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtCore.framework/Headers/QObject \
-		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtCore.framework/Headers/qobject.h \
-		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtWidgets.framework/Headers/QGraphicsPixmapItem \
-		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtWidgets.framework/Headers/qgraphicsitem.h \
-		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtGui.framework/Headers/QKeyEvent \
-		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtGui.framework/Headers/qevent.h
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o donka.o ../taiko/donka.cpp
 
 file_control.o: ../taiko/file_control.cpp ../taiko/file_control.h \
 		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtCore.framework/Headers/QString \
@@ -794,14 +942,30 @@ file_control.o: ../taiko/file_control.cpp ../taiko/file_control.h \
 		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtWidgets.framework/Headers/QMessageBox \
 		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtWidgets.framework/Headers/qmessagebox.h \
 		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtCore.framework/Headers/QMap \
-		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtCore.framework/Headers/qmap.h
+		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtCore.framework/Headers/qmap.h \
+		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtCore.framework/Headers/QDir \
+		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtCore.framework/Headers/qdir.h \
+		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtCore.framework/Headers/QStringList \
+		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtCore.framework/Headers/qstringlist.h \
+		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtCore.framework/Headers/QTextCodec \
+		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtCore.framework/Headers/qtextcodec.h \
+		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtCore.framework/Headers/QDebug \
+		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtCore.framework/Headers/qdebug.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o file_control.o ../taiko/file_control.cpp
+
+notes.o: ../taiko/notes.cpp ../taiko/notes.h \
+		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtWidgets.framework/Headers/QGraphicsPixmapItem \
+		/Users/Evan/Qt5.6.0/5.6/clang_64/lib/QtWidgets.framework/Headers/qgraphicsitem.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o notes.o ../taiko/notes.cpp
 
 qrc_resource.o: qrc_resource.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o qrc_resource.o qrc_resource.cpp
 
 moc_mainwindow.o: moc_mainwindow.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_mainwindow.o moc_mainwindow.cpp
+
+moc_scene.o: moc_scene.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_scene.o moc_scene.cpp
 
 ####### Install
 

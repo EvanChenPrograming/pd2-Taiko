@@ -1,6 +1,8 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
+#include <QDebug>
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -22,7 +24,7 @@ MainWindow::~MainWindow()
 void MainWindow::settingBg()
 {
     QImage bg;
-    bg.load(":/pics/open.jpg");
+    bg.load(":/pics/pics/open.jpg");
     bg = bg.scaled(770,400);
     scene->setBackgroundBrush(bg);
     /* Goto setting the initial page for bbtan */

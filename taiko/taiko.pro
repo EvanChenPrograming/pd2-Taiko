@@ -17,15 +17,16 @@ QT += widgets
 SOURCES += main.cpp\
         mainwindow.cpp \
     scene.cpp \
-    donka.cpp \
-    file_control.cpp
+    file_control.cpp \
+    notes.cpp
 
 HEADERS  += mainwindow.h \
     scene.h \
-    donka.h \
-    file_control.h
+    file_control.h \
+    notes.h
 
 FORMS    += mainwindow.ui
 
 RESOURCES += \
     resource.qrc
+CONFIG   -= x86_64
