@@ -1304,7 +1304,7 @@ void Scene::createDanceItem(){
     toNum=0;
     danceNum=0;
     missCombo=0;
-    rate=3;
+    rate=5;
     if(set30secMode==true)dscore=BPM*3;
     else dscore=BPM*9;
     d1 = new QGraphicsPixmapItem;
@@ -1451,7 +1451,7 @@ void Scene::Dance(){
     //d add
     if(missCombo>rate && toNum>0){
         missCombo=0;
-        rate+=1;
+        rate+=5;
         //dscore/=2;
         if(toNum==6){
 

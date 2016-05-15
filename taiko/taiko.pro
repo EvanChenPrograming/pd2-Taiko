@@ -30,3 +30,4 @@ FORMS    += mainwindow.ui
 RESOURCES += \
     resource.qrc
 CONFIG   -= x86_64
+#DESTDIR += "/Users/Evan/Documents/fresh_2sem/pd2/gitHWs/pd2-Taiko"

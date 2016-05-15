@@ -6,16 +6,15 @@ file_control::file_control()
 
 void file_control::songlist_init(){
     QStringList songlist;
-    dir.setPath("/Users/Evan/Documents/fresh_2sem/pd2/gitHWs/pd2-Taiko/taiko/songs");
+    dir.setPath(path+"taiko/songs");
     dir.setSorting(QDir::Name);
-    //dir.setFilter(QDir::NoDotAndDotDot);
     songlist = dir.entryList();
     /*for(int i=0;i<songlist.size();++i){
         cout<<songlist.at(i).toUtf8().constData()<<endl;
     }
     cout<<"fuck "<<songlist.size()<<endl;
 */
-    QFile ofile("/Users/Evan/Documents/fresh_2sem/pd2/gitHWs/pd2-Taiko/taiko/files/song_list.txt");
+    QFile ofile(path+"taiko/files/song_list.txt");
     if(!ofile.open(QIODevice::WriteOnly)) {
         QMessageBox::information(0,"error",ofile.errorString());
     }
@@ -29,7 +28,6 @@ void file_control::songlist_init(){
 }
 
 QString file_control::getSubtitle(QString Title){
-    path="/Users/Evan/Documents/fresh_2sem/pd2/gitHWs/pd2-Taiko/";
     QString pathNom = QDir::toNativeSeparators(path+"taiko/songs/"+Title.toUtf8()+"/"+Title.toUtf8()+".tja");
     QFile fin(pathNom);
     if(!fin.open(QIODevice::ReadOnly)) {
