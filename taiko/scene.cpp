@@ -3,7 +3,7 @@ Scene::Scene()
 {
     Map.songlist_init();
     QString line;
-    QFile list("/Users/Evan/Documents/fresh_2sem/pd2/gitHWs/pd2-Taiko/taiko/files/song_list.txt");
+    QFile list(Map.path+"/taiko/files/song_list.txt");
     if(!list.open(QIODevice::ReadOnly)) {
         QMessageBox::information(0,"error",list.errorString());
     }

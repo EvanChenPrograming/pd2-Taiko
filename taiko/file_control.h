@@ -31,6 +31,7 @@ public:
     void convert(bool);
 
     QDir dir;
+    //QString path="./";
     QString path="/Users/Evan/Documents/fresh_2sem/pd2/gitHWs/pd2-Taiko/";
     QMap<QString,float> map;
     QStringList songMap;
