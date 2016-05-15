@@ -57,6 +57,9 @@ public:
     void checked();
 
     //play
+    void loadDancerPic();
+    void createDanceItem();
+    void removeDanceItem();
     void setMap();
     void startPlay();
     void eliminate(int);
@@ -72,11 +75,11 @@ public slots:
     void secondsLeft();
 
     //animation
-    /*void playRdong();
+    void playRdong();
     void playLdong();
     void playRka();
     void playLka();
-*/
+
     void GenGreat();
     void GenGood();
     void GenMiss();
@@ -85,15 +88,31 @@ public slots:
     void GenExplode();
     void RemoveExplode();
     void ShowScore();
-    void DanceAndJump();
+    void Jumper();
+    void Dance();
+    void donJump();
+    void FlySoul();
+    void MidSoul();
+    void WalkSoul();
+    void GenFlySoul();
+    void GenMidSoul();
+    void GenWalkSoul();
 
 signals:
+    void PlayRdong();
+    void PlayLdong();
+    void PlayRka();
+    void PlayLka();
     void Great();
     void Good();
     void Miss();
     void Explode();
     void Combo();
     void Score();
+    void Jump();
+    void SoulF();
+    void SoulM();
+    void SoulW();
 
 
 
@@ -133,7 +152,7 @@ private:
     QStringList songMap;
     int great=0,good=0,miss=0,score=0,combo=0,maxcombo=0;
     int soul=0;//48pass 63full
-    int notesGen=0;
+    int missCombo=0,rate=0;
     int firstlayer=1,secondlayer=0;
     float BPM;
     int msec,test;
@@ -141,7 +160,10 @@ private:
     int secLeft=30;
 
     //animation
-    QTimer *soundTimer,*AniTimer1,*AniTimer2,*AniTimer3;
+    QTimer *RD,*RK,*LD,*LK;
+    QGraphicsPixmapItem *rdp,*ldp,*rkp,*lkp;
+    bool add[4]={false,false,false,false};
+    QTimer *soundTimer,*AniTimer1,*AniTimer2,*AniTimer3,*AniTimer4;
     QList<QGraphicsPixmapItem *> Judge;
     QList<QGraphicsPixmapItem *> expl;
     QPixmap ex1;
@@ -149,8 +171,14 @@ private:
     QPixmap ctdnumberPic[10];
     QPixmap scorenumberPic[10];
     QList<QGraphicsPixmapItem *> numbers,ctdnumbers,scorenumbers;
-    QPixmap dancePic[10];
-    QList<QGraphicsPixmapItem *> dancers;
+    QPixmap jumpPic[3];
+    int jumpPicNum=1;
+    QGraphicsPixmapItem *jumper;
+    QList<QGraphicsPixmapItem *> FSlist,MSlist,WSlist;
+    int dancer_ctr[6][2]={0},toNum=0,danceNum=0,dscore=500;
+    QGraphicsPixmapItem *d1,*d2,*d3,*d4,*d5;
+    QPixmap d1pa[16],d1pd[16],d1pn[16],d2pa[16],d2pd[16],d2pn[16],d3pa[16],d3pd[16],d3pn[16];
+    QPixmap d4pa[16],d4pd[16],d4pn[16],d5pa[16],d5pd[16],d5pn[16];
 
     //result
     QSound *seiseki,*fullcombo;

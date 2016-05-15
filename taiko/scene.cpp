@@ -82,7 +82,6 @@ void Scene::keyPressEvent(QKeyEvent *key){
             dong->play();
             checked();
         }
-
         if(key->key()==Qt::Key_Escape){
             unsetbg_2();
             screenMode=1;
@@ -94,18 +93,22 @@ void Scene::keyPressEvent(QKeyEvent *key){
         if(key->key()==Qt::Key_F){
             dong->play();
             eliminate(1);
+            emit PlayLdong();
         }
         if(key->key()==Qt::Key_J){
             dong->play();
             eliminate(1);
+            emit PlayRdong();
         }
         if(key->key()==Qt::Key_D){
             ka->play();
             eliminate(2);
+            emit PlayLka();
         }
         if(key->key()==Qt::Key_K){
             ka->play();
             eliminate(2);
+            emit PlayRka();
         }
         if(key->key()==Qt::Key_P){
             p++;
@@ -113,12 +116,18 @@ void Scene::keyPressEvent(QKeyEvent *key){
                 track->pause();
                 timer1->stop();
                 timer2->stop();
+                AniTimer1->stop();
+                AniTimer3->stop();
+                AniTimer4->stop();
                 if(set30secMode==true)countdown->stop();
             }
             else if(p==2){
                 track->play();
                 timer1->start();
                 timer2->start();
+                AniTimer1->start();
+                AniTimer3->start();
+                AniTimer4->start();
                 if(set30secMode==true)countdown->start();
                 p=0;
             }
@@ -280,6 +289,7 @@ void Scene::unsetbg_2(){
     removeItem(icon_30sec);
     removeItem(picked_background_a);
     removeItem(icon_auto);
+    removeItem(arrow);
     delete d;
     delete picked_background_3;
     delete picked_background_r;
@@ -287,6 +297,7 @@ void Scene::unsetbg_2(){
     delete icon_30sec;
     delete icon_rand;
     delete icon_auto;
+    delete arrow;
     now_on=0;
 }
 void Scene::setbg_3(){
@@ -344,13 +355,49 @@ void Scene::setbg_3(){
     foreach (QString i, songMap) {
         qDebug()<<i<<endl;
     }
+
+    RD = new QTimer(this);
+    LD = new QTimer(this);
+    RK = new QTimer(this);
+    LK = new QTimer(this);
+    rdp = new QGraphicsPixmapItem;ldp = new QGraphicsPixmapItem;
+    rkp = new QGraphicsPixmapItem;lkp = new QGraphicsPixmapItem;
+    QPixmap res;
+    res.load(":/pics/pics/rd.png");
+    rdp->setPixmap(res);rdp->setPos(147,123);
+    res.load(":/pics/pics/ld.png");
+    ldp->setPixmap(res);ldp->setPos(106,123);
+    res.load(":/pics/pics/rk.png");
+    rkp->setPixmap(res);rkp->setPos(147,124);
+    res.load(":/pics/pics/lk.png");
+    lkp->setPixmap(res);lkp->setPos(105,124);
+    for(int i=0;i<4;i++){
+        add[i]=false;
+    }
+    QObject::connect(this , SIGNAL(PlayRdong()) , this , SLOT(playRdong()));
+    QObject::connect(this , SIGNAL(PlayLdong()) , this , SLOT(playLdong()));
+    QObject::connect(this , SIGNAL(PlayRka()) , this , SLOT(playRka()));
+    QObject::connect(this , SIGNAL(PlayLka()) , this , SLOT(playLka()));
+    QObject::connect(RD , SIGNAL(timeout()) , this , SLOT(playRdong()));
+    QObject::connect(LD , SIGNAL(timeout()) , this , SLOT(playLdong()));
+    QObject::connect(RK , SIGNAL(timeout()) , this , SLOT(playRka()));
+    QObject::connect(LK , SIGNAL(timeout()) , this , SLOT(playLka()));    
+
     AniTimer1 = new QTimer(this);
     QObject::connect(AniTimer1 , SIGNAL(timeout()) , this , SLOT(moveJudgement()));
+    QObject::connect(AniTimer1 , SIGNAL(timeout()) , this , SLOT(FlySoul()));
+    QObject::connect(AniTimer1 , SIGNAL(timeout()) , this , SLOT(MidSoul()));
+    QObject::connect(AniTimer1 , SIGNAL(timeout()) , this , SLOT(WalkSoul()));
+
     QObject::connect(this , SIGNAL(Great()) , this , SLOT(GenGreat()));
     QObject::connect(this , SIGNAL(Good()) , this , SLOT(GenGood()));
     QObject::connect(this , SIGNAL(Miss()) , this , SLOT(GenMiss()));
     QObject::connect(this , SIGNAL(Combo()) , this , SLOT(ShowCombo()));
     QObject::connect(this , SIGNAL(Score()) , this , SLOT(ShowScore()));
+    QObject::connect(this , SIGNAL(Jump()) , this , SLOT(donJump()));
+    QObject::connect(this , SIGNAL(SoulF()) , this , SLOT(GenFlySoul()));
+    QObject::connect(this , SIGNAL(SoulM()) , this , SLOT(GenMidSoul()));
+    QObject::connect(this , SIGNAL(SoulW()) , this , SLOT(GenWalkSoul()));
 
     ex1.load(":/pics/pics/explosion_s4.png");
     AniTimer2 = new QTimer(this);
@@ -358,11 +405,19 @@ void Scene::setbg_3(){
     QObject::connect(this , SIGNAL(Explode()) , this , SLOT(GenExplode()));
 
     AniTimer3 = new QTimer(this);
-    QObject::connect(AniTimer3 , SIGNAL(timeout()) , this , SLOT(DanceAndJump()));
+    QObject::connect(AniTimer3 , SIGNAL(timeout()) , this , SLOT(Jumper()));
+    jumper = new QGraphicsPixmapItem;
+    jumper->setPos(0,0);
+    addItem(jumper);
 
-    great=0;good=0;miss=0;notesGen=0;
+    AniTimer4 = new QTimer(this);
+    QObject::connect(AniTimer4 , SIGNAL(timeout()) , this , SLOT(Dance()));
+    loadDancerPic();
+    createDanceItem();
+
+    great=0;good=0;miss=0;
     combo=0;maxcombo=0;soul=0,score=0;
-    secLeft=30;
+    secLeft=30;jumpPicNum=1;
     msec=60000/BPM/4+2;
     test=60000/BPM/16;
     waitfor=109*test/2+Map.map["OFFSET"]*1000;
@@ -382,6 +437,10 @@ void Scene::setbg_3(){
         so = new QSound(":/sound/sound/voice_"+c+"combo.wav");
         comTrack.push_back(so);
         if(i==50)i+=50;
+    }
+    for(int i=0;i<3;i++){
+        jumpPic[i].load(":/pics/pics/playerchar_normal"+QString::number(i+1)+".png");
+        jumpPic[i] = jumpPic[i].scaled(jumpPic[i].width()*1.48,jumpPic[i].height()*1.48);
     }
     //Etimer = new QElapsedTimer;
     //Etimer->start();
@@ -415,6 +474,7 @@ void Scene::unsetbg_3(){
     AniTimer1->stop();
     AniTimer2->stop();
     AniTimer3->stop();
+    AniTimer4->stop();
     if(set30secMode==true){
         countdown->stop();
         delete countdown;
@@ -425,6 +485,8 @@ void Scene::unsetbg_3(){
         ctdnumbers.clear();
     }
     removeItem(text1);
+    removeItem(jumper);
+    delete jumper;
     foreach (QGraphicsPixmapItem *i, numbers) {
         removeItem(i);
     }
@@ -433,6 +495,18 @@ void Scene::unsetbg_3(){
         removeItem(i);
     }
     scorenumbers.clear();
+    foreach (QGraphicsPixmapItem *i, FSlist) {
+        removeItem(i);
+    }
+    FSlist.clear();
+    foreach (QGraphicsPixmapItem *i, WSlist) {
+        removeItem(i);
+    }
+    WSlist.clear();
+    foreach (QGraphicsPixmapItem *i, MSlist) {
+        removeItem(i);
+    }
+    MSlist.clear();
     songMap.clear();
     Map.songMap.clear();
     foreach(QGraphicsPixmapItem *i , Judge){
@@ -447,6 +521,7 @@ void Scene::unsetbg_3(){
     secondlayer=0;
     msec=0;
     waitfor=0;
+    removeDanceItem();
     foreach(notes *i , list){
         this->removeItem(i);
     }
@@ -459,11 +534,15 @@ void Scene::unsetbg_3(){
         this->removeItem(autoTag);
         delete autoTag;
     }
+    removeItem(rdp);removeItem(ldp);removeItem(rkp);removeItem(lkp);
+    delete rdp;delete ldp;delete rkp;delete lkp;
+    delete RD;delete LD;delete RK;delete LK;
     delete timer1;
     delete timer2;
     delete AniTimer1;
     delete AniTimer2;
     delete AniTimer3;
+    delete AniTimer4;
 }
 void Scene::setbg_4(){
     if(combo>maxcombo)maxcombo=combo;
@@ -572,6 +651,7 @@ void Scene::showscene1(){
         i=songs-2;
         j=songs-1;
         k=0;
+        s=songs-1;
     }
     else if(s==-2){
         s=songs-3;
@@ -754,6 +834,7 @@ void Scene::eliminate(int key){
         emit Explode();
         emit Combo();
         emit Score();
+        emit SoulF();
     }
     else if(x_pos<=269 && x_pos>=219 &&list.back()->symbol==key){
         ++good;
@@ -765,31 +846,23 @@ void Scene::eliminate(int key){
         emit Explode();
         emit Combo();
         emit Score();
+        emit SoulM();
     }
     else if(x_pos<219){
         this->removeItem(list.back());
         list.pop_back();
         ++miss;
+        ++missCombo;
         if(combo>maxcombo)maxcombo=combo;
         combo=0;
         emit Combo();
         emit Miss();
+        emit SoulW();
     }
 
     //cout<<"size: "<<list.size()<<endl;
     //cout<<"pos_last2: "<<list.at(list.size()-2)->pos().x()<<endl;
 
-}
-void Scene::stopWait(){
-    timer->stop();
-    delete timer;
-    timer3->start(waitfor);
-    timer2->start(msec);
-    timer1->start(test);
-    AniTimer1->start(50);
-    AniTimer2->start(100);
-    AniTimer3->start(60000/BPM);
-    if(set30secMode==true)countdown->start(1000);
 }
 void Scene::Generate(){
     QChar c=songMap.at(firstlayer).at(secondlayer);
@@ -827,7 +900,6 @@ void Scene::Generate(){
         dk->setPos(763,146);
         this->addItem(dk);
         list.push_front(dk);
-        notesGen++;
     }
     else if(c=='2'){
         notes *dk;
@@ -838,7 +910,6 @@ void Scene::Generate(){
         dk->setPos(763,146);
         this->addItem(dk);
         list.push_front(dk);
-        notesGen++;
     }
     else if(c=='3'){
         notes *dk;
@@ -849,7 +920,6 @@ void Scene::Generate(){
         dk->setPos(763,136);
         this->addItem(dk);
         list.push_front(dk);
-        notesGen++;
     }
     else if(c=='4'){
         notes *dk;
@@ -860,7 +930,6 @@ void Scene::Generate(){
         dk->setPos(763,136);
         this->addItem(dk);
         list.push_front(dk);
-        notesGen++;
     }
     else return;
 }
@@ -872,10 +941,12 @@ void Scene::Move(){
             this->removeItem(i);
             list.pop_back();
             ++miss;
+            ++missCombo;
             if(combo>maxcombo)maxcombo=combo;
             combo=0;
             emit Combo();
             emit Miss();
+            emit SoulW();
         }
     }
 }
@@ -889,14 +960,34 @@ void Scene::Auto(){
             score+=370+80*combo/10;
             removeItem(i);
             list.pop_back();
-            i->symbol==1?dong->play():ka->play();
+            if(i->symbol==1){
+                dong->play();
+                emit PlayRdong();
+            }
+            else {
+                ka->play();
+                emit PlayRka();
+            }
             emit Great();
             emit Explode();
             emit Combo();
             emit Score();
+            emit SoulF();
         }
     }
 
+}
+void Scene::stopWait(){
+    timer->stop();
+    delete timer;
+    timer3->start(waitfor);
+    timer2->start(msec);
+    timer1->start(test);
+    AniTimer1->start(50);
+    AniTimer2->start(100);
+    AniTimer3->start(60000/BPM/2+2);
+    AniTimer4->start(msec);
+    if(set30secMode==true)countdown->start(1000);
 }
 void Scene::startWave(){
     track->play();
@@ -904,6 +995,7 @@ void Scene::startWave(){
     delete timer3;
 }
 void Scene::playSeiseki(){
+    screenMode=5;
     unsetbg_3();
     QImage bg;
     bg.load(":/pics/pics/maku.png");
@@ -927,6 +1019,54 @@ void Scene::endPlay(){
 }
 
 //animation
+void Scene::playRdong(){
+    if(add[0]==true){
+        RD->stop();
+        removeItem(rdp);
+        add[0]=false;
+    }
+    else{
+        add[0]=true;
+        addItem(rdp);
+        RD->start(150);
+    }
+}
+void Scene::playLdong(){
+    if(add[1]==true){
+        LD->stop();
+        removeItem(ldp);
+        add[1]=false;
+    }
+    else{
+        add[1]=true;
+        addItem(ldp);
+        LD->start(150);
+    }
+}
+void Scene::playRka(){
+    if(add[2]==true){
+        RK->stop();
+        removeItem(rkp);
+        add[2]=false;
+    }
+    else{
+        add[2]=true;
+        addItem(rkp);
+        RK->start(150);
+    }
+}
+void Scene::playLka(){
+    if(add[3]==true){
+        LK->stop();
+        removeItem(lkp);
+        add[3]=false;
+    }
+    else{
+        add[3]=true;
+        addItem(lkp);
+        LK->start(150);
+    }
+}
 void Scene::GenGreat(){
     QGraphicsPixmapItem *j;
     j = new QGraphicsPixmapItem;
@@ -1003,7 +1143,21 @@ void Scene::secondsLeft(){
     }
     secLeft--;
 }
-void Scene::DanceAndJump(){
+void Scene::Jumper(){
+    if(jumpPicNum==0){
+        jumper->setPixmap(jumpPic[0]);
+    }
+    else {
+        jumper->setPixmap(jumpPic[1]);
+    }
+    if(jumpPicNum==3)AniTimer3->start(60000/BPM/2+2);
+    jumpPicNum==0?jumpPicNum=1:jumpPicNum=0;
+
+}
+void Scene::donJump(){
+    jumper->setPixmap(jumpPic[2]);
+    AniTimer3->start(60000/BPM+4);
+    jumpPicNum=3;
 
 }
 void Scene::ShowCombo(){
@@ -1012,6 +1166,7 @@ void Scene::ShowCombo(){
     }
     numbers.clear();
     if(combo<5)return;
+    if(combo%10==0)emit Jump();
     if(combo==50)comTrack[0]->play();
     else if(combo==100)comTrack[1]->play();
     else if(combo%100==0&&combo<901)comTrack[combo/100-1]->play();
@@ -1058,7 +1213,283 @@ void Scene::ShowScore(){
         scorenumbers.push_front(N);
     }
 }
+void Scene::FlySoul(){
+    foreach (QGraphicsPixmapItem *i, FSlist) {
+        i->setPos(i->pos().x()+22,i->pos().y());
+            // Do boundary check
+        if(i->pos().x()>720){
+            this->removeItem(i);
+            FSlist.pop_back();
+        }
+    }
+}
+void Scene::MidSoul(){
+    foreach (QGraphicsPixmapItem *i, MSlist) {
+        i->setPos(i->pos().x()+10,i->pos().y());
+            // Do boundary check
+        /*if(i->pos().x()>700){
+            this->removeItem(i);
+            WSlist.pop_back();
+        }*/
+    }
+}
+void Scene::WalkSoul(){
+    foreach (QGraphicsPixmapItem *i, WSlist) {
+        i->setPos(i->pos().x()+5,i->pos().y());
+            // Do boundary check
+        if(i->pos().x()>720){
+            this->removeItem(i);
+            WSlist.pop_back();
+        }
+    }
+}
+void Scene::GenFlySoul(){
+    QGraphicsPixmapItem *j;
+    j = new QGraphicsPixmapItem;
+    QPixmap pic;
+    pic.load(":/pics/pics/tamashi0.png");
+    pic = pic.scaled(120,61,Qt::KeepAspectRatio);
+    j->setPixmap(pic);
+    j->setPos(182,20);
+    this->addItem(j);
+    FSlist.push_front(j);
+}
+void Scene::GenMidSoul(){
+    QGraphicsPixmapItem *j;
+    j = new QGraphicsPixmapItem;
+    QPixmap pic;
+    pic.load(":/pics/pics/tamashi1.png");
+    pic = pic.scaled(75,61,Qt::KeepAspectRatio);
+    j->setPixmap(pic);
+    j->setPos(182,31);
+    this->addItem(j);
+    MSlist.push_front(j);
+}
+void Scene::GenWalkSoul(){
+    QGraphicsPixmapItem *j;
+    j = new QGraphicsPixmapItem;
+    QPixmap pic;
+    pic.load(":/pics/pics/tamashi2.png");
+    pic = pic.scaled(100,61,Qt::KeepAspectRatio);
+    j->setPixmap(pic);
+    j->setPos(182,55);
+    this->addItem(j);
+    WSlist.push_front(j);
+}
+void Scene::loadDancerPic(){
+    for(int i=0;i<16;i++){
+        d1pa[i].load(":/dancer1/pics/1/dancer_a"+QString::number(i+1)+".png");
+        d1pd[i].load(":/dancer1/pics/1/dancer_d"+QString::number(i+1)+".png");
+        d1pn[i].load(":/dancer1/pics/1/dancer_n"+QString::number(i+1)+".png");
+        d2pa[i].load(":/dancer2/pics/2/dancer_2a"+QString::number(i+1)+".png");
+        d2pd[i].load(":/dancer2/pics/2/dancer_2d"+QString::number(i+1)+".png");
+        d2pn[i].load(":/dancer2/pics/2/dancer_2n"+QString::number(i+1)+".png");
+        d3pa[i].load(":/dancer3/pics/3/dancer_3a"+QString::number(i+1)+".png");
+        d3pd[i].load(":/dancer3/pics/3/dancer_3d"+QString::number(i+1)+".png");
+        d3pn[i].load(":/dancer3/pics/3/dancer_3n"+QString::number(i+1)+".png");
+        d4pa[i].load(":/dancer4/pics/4/dancer_4a"+QString::number(i+1)+".png");
+        d4pd[i].load(":/dancer4/pics/4/dancer_4d"+QString::number(i+1)+".png");
+        d4pn[i].load(":/dancer4/pics/4/dancer_4n"+QString::number(i+1)+".png");
+        d5pa[i].load(":/dancer5/pics/5/dancer_5a"+QString::number(i+1)+".png");
+        d5pd[i].load(":/dancer5/pics/5/dancer_5d"+QString::number(i+1)+".png");
+        d5pn[i].load(":/dancer5/pics/5/dancer_5n"+QString::number(i+1)+".png");
+    }
+}
+void Scene::createDanceItem(){
+    for(int i=0;i<6;i++){
+        for(int j=0;j<3;j++){
+            dancer_ctr[i][j]=0;
+        }
+    }
+    toNum=0;
+    danceNum=0;
+    missCombo=0;
+    rate=3;
+    if(set30secMode==true)dscore=BPM*3;
+    else dscore=BPM*9;
+    d1 = new QGraphicsPixmapItem;
+    d2 = new QGraphicsPixmapItem;
+    d3 = new QGraphicsPixmapItem;
+    d4 = new QGraphicsPixmapItem;
+    d5 = new QGraphicsPixmapItem;
+    //setpos add
+    d1->setPos(300,180);
+    addItem(d1);
+    d2->setPos(380,180);
+    addItem(d2);
+    d3->setPos(220,180);
+    addItem(d3);
+    d4->setPos(460,180);
+    addItem(d4);
+    d5->setPos(140,180);
+    addItem(d5);
 
+}
+void Scene::removeDanceItem(){
+    this->removeItem(d1);
+    this->removeItem(d2);
+    this->removeItem(d3);
+    this->removeItem(d4);
+    this->removeItem(d5);
+    delete d1,d2,d3,d4,d5;
+
+}
+void Scene::Dance(){
+    //n
+    if(danceNum>15)danceNum=0;
+    if(dancer_ctr[1][0]==2)
+        d1->setPixmap(d1pn[danceNum]);
+    if(dancer_ctr[2][0]==2)
+        d2->setPixmap(d2pn[danceNum]);
+    if(dancer_ctr[3][0]==2)
+        d3->setPixmap(d3pn[danceNum]);
+    if(dancer_ctr[4][0]==2)
+        d4->setPixmap(d4pn[danceNum]);
+    if(dancer_ctr[5][0]==2)
+        d5->setPixmap(d5pn[danceNum]);
+    //move rest
+    if(dancer_ctr[1][0]==1){
+        d1->setPixmap(d1pa[++dancer_ctr[1][1]]);
+        if(dancer_ctr[1][1]>14){
+            dancer_ctr[1][0]=2;
+        }
+    }
+    if(dancer_ctr[2][0]==1){
+        d2->setPixmap(d2pa[++dancer_ctr[2][1]]);
+        if(dancer_ctr[2][1]>14){
+            dancer_ctr[2][0]=2;
+        }
+    }
+    if(dancer_ctr[3][0]==1){
+        d3->setPixmap(d3pa[++dancer_ctr[3][1]]);
+        if(dancer_ctr[3][1]>14){
+            dancer_ctr[3][0]=2;
+        }
+    }
+    if(dancer_ctr[4][0]==1){
+        d4->setPixmap(d4pa[++dancer_ctr[4][1]]);
+        if(dancer_ctr[4][1]>14){
+            dancer_ctr[4][0]=2;
+        }
+    }
+    if(dancer_ctr[5][0]==1){
+        d5->setPixmap(d5pa[++dancer_ctr[5][1]]);
+        if(dancer_ctr[5][1]>14){
+            dancer_ctr[5][0]=2;
+        }
+    }
+
+    if(dancer_ctr[1][0]==3){
+        d1->setPixmap(d1pd[++dancer_ctr[1][1]]);
+        if(dancer_ctr[1][1]>14){
+            dancer_ctr[1][0]=0;
+        }
+    }
+    if(dancer_ctr[2][0]==3){
+        d2->setPixmap(d2pd[++dancer_ctr[2][1]]);
+        if(dancer_ctr[2][1]>14){
+            dancer_ctr[2][0]=0;
+        }
+    }
+    if(dancer_ctr[3][0]==3){
+        d3->setPixmap(d3pd[++dancer_ctr[3][1]]);
+        if(dancer_ctr[3][1]>14){
+            dancer_ctr[3][0]=0;
+        }
+    }
+    if(dancer_ctr[4][0]==3){
+        d4->setPixmap(d4pd[++dancer_ctr[4][1]]);
+        if(dancer_ctr[4][1]>14){
+            dancer_ctr[4][0]=0;
+        }
+    }
+    if(dancer_ctr[5][0]==3){
+        d5->setPixmap(d5pd[++dancer_ctr[5][1]]);
+        if(dancer_ctr[5][1]>14){
+            dancer_ctr[5][0]=0;
+        }
+    }
+
+    //a add
+    if(score/dscore>1 && toNum<=5){
+        dscore*=2;
+        if(toNum==0){
+            dancer_ctr[1][0]=1;
+            d1->setPixmap(d1pa[0]);
+            dancer_ctr[1][1]=0;
+            ++toNum;
+        }
+        else if(toNum==1){
+            dancer_ctr[2][0]=1;
+            d2->setPixmap(d2pa[0]);
+            dancer_ctr[2][1]=0;
+            ++toNum;
+        }
+        else if(toNum==2){
+            dancer_ctr[3][0]=1;
+            d3->setPixmap(d3pa[0]);
+            dancer_ctr[3][1]=0;
+            ++toNum;
+        }
+        else if(toNum==3){
+            dancer_ctr[4][0]=1;
+            d4->setPixmap(d4pa[0]);
+            dancer_ctr[4][1]=0;
+            ++toNum;
+        }
+        else if(toNum==4){
+            dancer_ctr[5][0]=1;
+            d5->setPixmap(d5pa[0]);
+            dancer_ctr[5][1]=0;
+            ++toNum;
+        }
+        else if(toNum==5){
+
+            ++toNum;
+        }
+    }
+    //d add
+    if(missCombo>rate && toNum>0){
+        missCombo=0;
+        rate+=1;
+        //dscore/=2;
+        if(toNum==6){
+
+        }
+        else if(toNum==5){
+            dancer_ctr[5][0]=3;
+            d5->setPixmap(d5pd[0]);
+            dancer_ctr[5][1]=0;
+            --toNum;
+        }
+        else if(toNum==4){
+            dancer_ctr[4][0]=3;
+            d4->setPixmap(d4pd[0]);
+            dancer_ctr[4][1]=0;
+            --toNum;
+        }
+        else if(toNum==3){
+            dancer_ctr[3][0]=3;
+            d3->setPixmap(d3pd[0]);
+            dancer_ctr[3][1]=0;
+            --toNum;
+        }
+        else if(toNum==2){
+            dancer_ctr[2][0]=3;
+            d2->setPixmap(d2pd[0]);
+            dancer_ctr[2][1]=0;
+            --toNum;
+        }
+        else if(toNum==1){
+            dancer_ctr[1][0]=3;
+            d1->setPixmap(d1pd[0]);
+            dancer_ctr[1][1]=0;
+            --toNum;
+        }
+    }
+
+    danceNum++;
+}
 //debug
 void Scene::mousePressEvent(QGraphicsSceneMouseEvent *event){
     cout << "Now event x: " << event->scenePos().x()<< " event y: " << event->scenePos().y() << endl;
