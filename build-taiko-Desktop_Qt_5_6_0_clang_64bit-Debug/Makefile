@@ -182,7 +182,6 @@ DIST          = /Users/Evan/Qt5.6.0/5.6/clang_64/mkspecs/features/spec_pre.prf \
 		/Users/Evan/Qt5.6.0/5.6/clang_64/mkspecs/features/qt_config.prf \
 		/Users/Evan/Qt5.6.0/5.6/clang_64/mkspecs/macx-clang/qmake.conf \
 		/Users/Evan/Qt5.6.0/5.6/clang_64/mkspecs/features/spec_post.prf \
-		../taiko/.qmake.stash \
 		/Users/Evan/Qt5.6.0/5.6/clang_64/mkspecs/features/exclusive_builds.prf \
 		/Users/Evan/Qt5.6.0/5.6/clang_64/mkspecs/features/default_pre.prf \
 		/Users/Evan/Qt5.6.0/5.6/clang_64/mkspecs/features/mac/default_pre.prf \
@@ -343,7 +342,6 @@ Makefile: ../taiko/taiko.pro /Users/Evan/Qt5.6.0/5.6/clang_64/mkspecs/macx-clang
 		/Users/Evan/Qt5.6.0/5.6/clang_64/mkspecs/features/qt_config.prf \
 		/Users/Evan/Qt5.6.0/5.6/clang_64/mkspecs/macx-clang/qmake.conf \
 		/Users/Evan/Qt5.6.0/5.6/clang_64/mkspecs/features/spec_post.prf \
-		.qmake.stash \
 		/Users/Evan/Qt5.6.0/5.6/clang_64/mkspecs/features/exclusive_builds.prf \
 		/Users/Evan/Qt5.6.0/5.6/clang_64/mkspecs/features/default_pre.prf \
 		/Users/Evan/Qt5.6.0/5.6/clang_64/mkspecs/features/mac/default_pre.prf \
@@ -492,7 +490,6 @@ Makefile: ../taiko/taiko.pro /Users/Evan/Qt5.6.0/5.6/clang_64/mkspecs/macx-clang
 /Users/Evan/Qt5.6.0/5.6/clang_64/mkspecs/features/qt_config.prf:
 /Users/Evan/Qt5.6.0/5.6/clang_64/mkspecs/macx-clang/qmake.conf:
 /Users/Evan/Qt5.6.0/5.6/clang_64/mkspecs/features/spec_post.prf:
-.qmake.stash:
 /Users/Evan/Qt5.6.0/5.6/clang_64/mkspecs/features/exclusive_builds.prf:
 /Users/Evan/Qt5.6.0/5.6/clang_64/mkspecs/features/default_pre.prf:
 /Users/Evan/Qt5.6.0/5.6/clang_64/mkspecs/features/mac/default_pre.prf:
