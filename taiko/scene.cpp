@@ -986,7 +986,7 @@ void Scene::stopWait(){
     AniTimer1->start(50);
     AniTimer2->start(100);
     AniTimer3->start(60000/BPM/2+2);
-    AniTimer4->start(msec);
+    AniTimer4->start(msec-2);
     if(set30secMode==true)countdown->start(1000);
 }
 void Scene::startWave(){
