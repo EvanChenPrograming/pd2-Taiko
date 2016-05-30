@@ -10,6 +10,7 @@
 #include <QDir>
 #include <QStringList>
 #include <QTextCodec>
+#include <QApplication>
 #include <ctime>
 #include <cstdlib>
 
@@ -32,7 +33,7 @@ public:
 
     QDir dir;
     //QString path="/";
-    QString path="/Users/Evan/Documents/fresh_2sem/pd2/gitHWs/pd2-Taiko/";
+    QString path=QApplication::applicationDirPath();
     QMap<QString,float> map;
     QStringList songMap;
     QString TITLE,SUBTITLE,WAVE,trackPath;

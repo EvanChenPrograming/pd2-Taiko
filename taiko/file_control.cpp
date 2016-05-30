@@ -6,7 +6,7 @@ file_control::file_control()
 
 void file_control::songlist_init(){
     QStringList songlist;
-    dir.setPath(path+"taiko/songs");
+    dir.setPath(path+"/songs");
     dir.setSorting(QDir::Name);
     songlist = dir.entryList();
     /*for(int i=0;i<songlist.size();++i){
@@ -14,7 +14,7 @@ void file_control::songlist_init(){
     }
     cout<<"fuck "<<songlist.size()<<endl;
 */
-    QFile ofile(path+"taiko/files/song_list.txt");
+    QFile ofile(path+"/files/song_list.txt");
     if(!ofile.open(QIODevice::WriteOnly)) {
         QMessageBox::information(0,"error",ofile.errorString());
     }
@@ -28,7 +28,7 @@ void file_control::songlist_init(){
 }
 
 QString file_control::getSubtitle(QString Title){
-    QString pathNom = QDir::toNativeSeparators(path+"taiko/songs/"+Title.toUtf8()+"/"+Title.toUtf8()+".tja");
+    QString pathNom = QDir::toNativeSeparators(path+"/songs/"+Title.toUtf8()+"/"+Title.toUtf8()+".tja");
     QFile fin(pathNom);
     if(!fin.open(QIODevice::ReadOnly)) {
         cerr<<Title.toStdString()<<" not open"<<endl;
@@ -58,7 +58,7 @@ QString file_control::getSubtitle(QString Title){
 }
 
 void file_control::getStar(QString SongName){
-    QFile fin(path+"taiko/songs/"+SongName.toUtf8()+"/"+SongName.toUtf8()+".tja");
+    QFile fin(path+"/songs/"+SongName.toUtf8()+"/"+SongName.toUtf8()+".tja");
     if(!fin.open(QIODevice::ReadOnly)) {
         QMessageBox::information(0,"error",fin.errorString());
     }
@@ -97,7 +97,7 @@ void file_control::getStar(QString SongName){
 
 void file_control::setSongPlay(QString SongName){
     //qDebug()<<QDir::currentPath()<<endl;
-    QFile fin(path+"taiko/songs/"+SongName.toUtf8()+"/"+SongName.toUtf8()+".tja");
+    QFile fin(path+"/songs/"+SongName.toUtf8()+"/"+SongName.toUtf8()+".tja");
     if(!fin.open(QIODevice::ReadOnly)) {
         QMessageBox::information(0,"error",fin.errorString());
     }
@@ -130,11 +130,11 @@ void file_control::setSongPlay(QString SongName){
         }
     }
     fin.close();
-    trackPath = path+"taiko/songs/"+SongName.toUtf8()+"/"+WAVE.toUtf8();
+    trackPath = path+"/songs/"+SongName.toUtf8()+"/"+WAVE.toUtf8();
 }
 
 void file_control::getMap(QString SongName,int Level){
-    QFile fin(path+"taiko/songs/"+SongName.toUtf8()+"/"+SongName.toUtf8()+".tja");
+    QFile fin(path+"/songs/"+SongName.toUtf8()+"/"+SongName.toUtf8()+".tja");
     if(!fin.open(QIODevice::ReadOnly)) {
         QMessageBox::information(0,"error",fin.errorString());
     }

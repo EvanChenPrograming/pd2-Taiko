@@ -175,7 +175,7 @@ private:
     int jumpPicNum=1;
     QGraphicsPixmapItem *jumper;
     QList<QGraphicsPixmapItem *> FSlist,MSlist,WSlist;
-    int dancer_ctr[6][2]={0},toNum=0,danceNum=0,dscore=500;
+    int dancer_ctr[6][2]={{0}},toNum=0,danceNum=0,dscore=500;
     QGraphicsPixmapItem *d1,*d2,*d3,*d4,*d5;
     QPixmap d1pa[16],d1pd[16],d1pn[16],d2pa[16],d2pd[16],d2pn[16],d3pa[16],d3pd[16],d3pn[16];
     QPixmap d4pa[16],d4pd[16],d4pn[16],d5pa[16],d5pd[16],d5pn[16];

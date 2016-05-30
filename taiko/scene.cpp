@@ -3,7 +3,7 @@ Scene::Scene()
 {
     Map.songlist_init();
     QString line;
-    QFile list(Map.path+"/taiko/files/song_list.txt");
+    QFile list(Map.path+"/files/song_list.txt");
     if(!list.open(QIODevice::ReadOnly)) {
         QMessageBox::information(0,"error",list.errorString());
     }
@@ -1331,7 +1331,11 @@ void Scene::removeDanceItem(){
     this->removeItem(d3);
     this->removeItem(d4);
     this->removeItem(d5);
-    delete d1,d2,d3,d4,d5;
+    delete d1;
+    delete d2;
+    delete d3;
+    delete d4;
+    delete d5;
 
 }
 void Scene::Dance(){
